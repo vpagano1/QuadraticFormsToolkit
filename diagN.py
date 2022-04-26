@@ -114,10 +114,35 @@ while True:
             if rep[0]:
                 print(2*(8*i+m),"represented!",rep[1],"(n="+str(i)+": 2*(8*"+str(i)+"+"+str(m)+") )")
                 break
+    elif n in ["2sq", "2-square classes", "2 square classes"]:
+        k = get_integer(">> ",30)
+        for m in [1,3,5,7]:
+            represented_bool = False
+            for i in range(k+1):
+                rep = represents(qform, 8*i+m)
+                if rep[0]:
+                    print("u"+str(m)+":",8*i+m,"represented!",rep[1],"(n="+str(i)+": 8*"+str(i)+"+"+str(m)+")")
+                    represented_bool = True 
+                    break
+            if not represented_bool:
+                print("u"+str(m)+": not represented up to "+str(8*k+m)+", n="+str(k)+": 8*"+str(k)+"+"+str(m)+"")
+
+            represented_bool = False
+            for i in range(k+1):
+                rep = represents(qform, 2*(8*i+m))
+                if rep[0]:
+                    print("2u"+str(m)+":",2*(8*i+m),"represented!",rep[1],"(n="+str(i)+": 2*(8*"+str(i)+"+"+str(m)+") )")
+                    represented_bool = True
+                    break
+            if not represented_bool:
+                print("2u"+str(m)+": not represented up to "+str(2*(8*k+m))+", n="+str(k)+": 2*(8*"+str(k)+"+"+str(m)+")")
     else:
-        n = get_integer()
-        rep = represents(qform, n)
-        if rep[0]:
-            print("Represented!", rep[1])
-        elif not rep[0]:
-            print("Not represented!")
+        try:
+            nint = int(n)
+            rep = represents(qform, nint)
+            if rep[0]:
+                print("Represented!", rep[1])
+            elif not rep[0]:
+                print("Not represented!")
+        except ValueError:
+            print("Integers only, please!")
