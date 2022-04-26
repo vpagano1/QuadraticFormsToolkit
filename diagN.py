@@ -57,6 +57,19 @@ def get_coeffs():
                 print("Integers only, please!")
     return coeff
 
+def get_integer(input_string, default=False):
+    notinteger = True
+    while notinteger:
+        try:
+            notinteger = False
+            stdin = input(input_string)
+            if stdin == "" and default != False: k = default
+            else: k = int(stdin)
+        except ValueError:
+            notinteger = True
+            print("Integers only, please!")
+    return k
+
 restart = True
 while True:
     if restart:
@@ -72,40 +85,39 @@ while True:
     elif n in ["quit","q","exit","done"]:
         restart = True
     elif n in ["list", "l", "until", "unt"]:
-        notinteger = True
-        while notinteger:
-            try:
-                notinteger = False
-                k = int(input(">> "))
-                for i in range(k+1):
-                    rep = represents(qform, i)
-                    if rep[0]:
-                        print(i,"represented!",rep[1])
-                    elif not rep[0]:
-                        print(i,"not represented!")
-            except ValueError:
-                notinteger = True
-                print("Integers only, please!")
-    elif n in ["list hide", "hide list", "lh", "hl", "hide until", "until hide", "hunt", "unth"]:
-        notinteger = True
-        while notinteger:
-            try:
-                notinteger = False
-                k = int(input(">> "))
-                for i in range(k+1):
-                    rep = represents(qform, i)
-                    if not rep[0]:
-                        print(i,"not represented!")
-            except ValueError:
-                notinteger = True
-                print("Integers only, please!")
-    else:
-        try:
-            nint = int(n)
-            rep = represents(qform, nint)
+        k = get_integer(">> ")
+        for i in range(k+1):
+            rep = represents(qform, i)
             if rep[0]:
-                print("Represented!",rep[1])
+                print(i,"represented!",rep[1])
             elif not rep[0]:
-                print("Not represented!")
-        except ValueError:
-            print("Integers only, please!")
+                print(i,"not represented!")
+    elif n in ["list hide", "hide list", "lh", "hl", "hide until", "until hide", "hunt", "unth"]:
+        k = get_integer(">> ")
+        for i in range(k+1):
+            rep = represents(qform, i)
+            if not rep[0]:
+                print(i,"not represented!")
+    elif n in ["u1","u3","u5","u7"]:
+        k = get_integer(">> ",30)
+        m = int(n[1])
+        for i in range(k+1):
+            rep = represents(qform, 8*i+m)
+            if rep[0]:
+                print(8*i+m,"represented!",rep[1],"(n="+str(i)+": 8*"+str(i)+"+"+str(m)+")")
+                break
+    elif n in ["2u1","2u3","2u5","2u7"]:
+        k = get_integer(">> ",30)
+        m = int(n[2])
+        for i in range(k+1):
+            rep = represents(qform, 2*(8*i+m))
+            if rep[0]:
+                print(2*(8*i+m),"represented!",rep[1],"(n="+str(i)+": 2*(8*"+str(i)+"+"+str(m)+") )")
+                break
+    else:
+        n = get_integer()
+        rep = represents(qform, n)
+        if rep[0]:
+            print("Represented!", rep[1])
+        elif not rep[0]:
+            print("Not represented!")
