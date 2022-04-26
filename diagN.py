@@ -86,6 +86,19 @@ while True:
             except ValueError:
                 notinteger = True
                 print("Integers only, please!")
+    elif n in ["list hide", "hide list", "lh", "hl", "hide until", "until hide", "hunt", "unth"]:
+        notinteger = True
+        while notinteger:
+            try:
+                notinteger = False
+                k = int(input(">> "))
+                for i in range(k+1):
+                    rep = represents(qform, i)
+                    if not rep[0]:
+                        print(i,"not represented!")
+            except ValueError:
+                notinteger = True
+                print("Integers only, please!")
     else:
         try:
             nint = int(n)
