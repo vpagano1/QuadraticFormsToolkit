@@ -70,6 +70,16 @@ def get_integer(input_string, default=False):
             print("Integers only, please!")
     return k
 
+def getSquares(p):
+    squares = []
+    antisquares = []
+    for i in range(p):
+        squares.append((i**2)%p)
+    for i in range(p):
+        if not i in squares: antisquares.append(i)
+    squares.pop(squares.index(0))
+    return (squares, antisquares)
+
 restart = True
 while True:
     if restart:
@@ -125,7 +135,7 @@ while True:
                     represented_bool = True 
                     break
             if not represented_bool:
-                print(" u"+str(m)+": not represented up to "+str(8*k+m)+", n="+str(k)+": 8*"+str(k)+"+"+str(m)+"")
+                print(" u"+str(m)+": not represented up to "+str(8*k+m)+", (n="+str(k)+": 8*"+str(k)+"+"+str(m)+")")
 
             represented_bool = False
             for i in range(k+1):
@@ -135,7 +145,59 @@ while True:
                     represented_bool = True
                     break
             if not represented_bool:
-                print("2u"+str(m)+": not represented up to "+str(2*(8*k+m))+", n="+str(k)+": 2*(8*"+str(k)+"+"+str(m)+")")
+                print("2u"+str(m)+": not represented up to "+str(2*(8*k+m))+", (n="+str(k)+": 2*(8*"+str(k)+"+"+str(m)+") )")
+    elif n in ["psq","p-square classes","p square classes","odd"]:
+        p = get_integer(">> ",3)
+        k = get_integer(">> ",30)
+        squares, antisquares = getSquares(p)
+
+        represented_bool = False
+        for i in range(k+1):
+            if represented_bool == True: break
+            for j in squares:
+                rep = represents(qform, p*i+j)
+                if rep[0]:
+                    print(" [1]:",p*i+j,"represented!",rep[1],"(n="+str(i)+": "+str(p)+"*"+str(i)+"+"+str(j)+")")
+                    represented_bool = True
+                    break
+        if not represented_bool:
+            print(" [1]: not represented up to "+str(p*k+max(squares))+", n="+str(k)+": "+str(p)+"*"+str(k)+"+"+str(squares)+")")
+
+        represented_bool = False
+        for i in range(k+1):
+            if represented_bool == True: break
+            for j in antisquares:
+                rep = represents(qform, p*i+j)
+                if rep[0]:
+                    print(" [u]:",p*i+j,"represented!",rep[1],"(n="+str(i)+": "+str(p)+"*"+str(i)+"+"+str(j)+")")
+                    represented_bool = True
+                    break
+        if not represented_bool:
+            print(" [u]: not represented up to "+str(p*k+max(antisquares))+", n="+str(k)+": "+str(p)+"*"+str(k)+"+"+str(antisquares)+")")
+
+        represented_bool = False
+        for i in range(k+1):
+            if represented_bool == True: break
+            for j in squares:
+                rep = represents(qform, p*(p*i+j))
+                if rep[0]:
+                    print(" [p]:",p*(p*i+j),"represented!",rep[1],"(n="+str(i)+": "+str(p)+"*("+str(p)+"*"+str(i)+"+"+str(j)+") )")
+                    represented_bool = True
+                    break
+        if not represented_bool:
+            print(" [p]: not represented up to "+str(p*k+max(squares))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(squares)+") )")
+
+        represented_bool = False
+        for i in range(k+1):
+            if represented_bool == True: break
+            for j in antisquares:
+                rep = represents(qform, p*(p*i+j))
+                if rep[0]:
+                    print("[pu]:",p*(p*i+j),"represented!",rep[1],"(n="+str(i)+": "+str(p)+"*("+str(p)+"*"+str(i)+"+"+str(j)+") )")
+                    represented_bool = True
+                    break
+        if not represented_bool:
+            print("[pu]: not represented up to "+str(p*k+max(antisquares))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(antisquares)+") )")
     else:
         try:
             nint = int(n)
