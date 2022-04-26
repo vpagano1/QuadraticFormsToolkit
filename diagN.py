@@ -121,11 +121,11 @@ while True:
             for i in range(k+1):
                 rep = represents(qform, 8*i+m)
                 if rep[0]:
-                    print("u"+str(m)+":",8*i+m,"represented!",rep[1],"(n="+str(i)+": 8*"+str(i)+"+"+str(m)+")")
+                    print(" u"+str(m)+":",8*i+m,"represented!",rep[1],"(n="+str(i)+": 8*"+str(i)+"+"+str(m)+")")
                     represented_bool = True 
                     break
             if not represented_bool:
-                print("u"+str(m)+": not represented up to "+str(8*k+m)+", n="+str(k)+": 8*"+str(k)+"+"+str(m)+"")
+                print(" u"+str(m)+": not represented up to "+str(8*k+m)+", n="+str(k)+": 8*"+str(k)+"+"+str(m)+"")
 
             represented_bool = False
             for i in range(k+1):
