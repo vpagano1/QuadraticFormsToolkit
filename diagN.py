@@ -38,7 +38,7 @@ def represents(coeff,k):
 
 def universal(coeff):
     for k in range(16):
-        if not diag(coeff,k)[0]:
+        if not represents(coeff,k)[0]:
             print(k,"fails")
             return False
     return True
@@ -63,12 +63,14 @@ while True:
         qform = get_coeffs()
         restart = False
     n = input("> ")
-    if n in ["universal", "u", "uni"]:
+    if n == "":
+        pass
+    elif n in ["p", "print"]:
+        print(qform)
+    elif n in ["universal", "u", "uni"]:
         if universal(qform): print("Universal!")
     elif n in ["quit","q","exit","done"]:
         restart = True
-    elif n == "":
-        pass
     elif n in ["list", "l", "until", "unt"]:
         notinteger = True
         while notinteger:
