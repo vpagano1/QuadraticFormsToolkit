@@ -4,6 +4,7 @@ from sympy import primerange
 
 def evalQuad(coeff,entries):
     rank = len(coeff)
+    # if rank > 1:
     if rank != len(entries):
         raise Exception("Length of coefficients must match length of entries.")
     n = 0
@@ -217,8 +218,16 @@ while True:
             for p in primerange(3,det):
                 if det%p == 0:
                     print()
-                    print("p =",p)
+                    print("p="+str(p))
                     psquareclass(p,k)
+        if len(qform)==2:
+            pmax = get_integer(">> ",30)
+            print("p=2")
+            square2class(k)
+            for p in primerange(3,pmax):
+                print()
+                print("p="+str(p))
+                psquareclass(p,k)
     elif n[len(n)-2:len(n)] == "sq":
         k = get_integer(">> ",30)
         try:
@@ -232,12 +241,14 @@ while True:
         p = get_integer(">> ",2)
         n = get_integer(">> ",1)
         k = get_integer(">> ",5)
-        for i in range(k+1):
-            rep = represents(qform, n*p**i)
-            if rep[0]:
-                print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"represented!",rep[1])
-            elif not rep[0]:
-                print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"not represented!")
+        try:
+            for i in range(k+1):
+                rep = represents(qform, n*p**i)
+                if rep[0]:
+                    print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"represented!",rep[1])
+                elif not rep[0]:
+                    print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"not represented!")
+        except KeyboardInterrupt: pass
     elif n in ["p-ladder list","pll","ladder list"]:
         #[2, 3, 5, 7] 5-ladder?
         #[2, 4, 6, 9]=2[1,2](+)3[1,3] interesting loc uni p-ladder, not 2-ladder
@@ -246,12 +257,14 @@ while True:
         m = get_integer(">> ",5)
         k = get_integer(">> ",5)
         for n in range(1,m+1):
-            for i in range(k+1):
-                rep = represents(qform, n*p**i)
-                if rep[0]:
-                    print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"represented!",rep[1])
-                elif not rep[0]:
-                    print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"not represented!")
+            try:
+                for i in range(k+1):
+                    rep = represents(qform, n*p**i)
+                    if rep[0]:
+                        print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"represented!",rep[1])
+                    elif not rep[0]:
+                        print(str(n)+"*"+str(p)+"^"+str(i),"=",n*p**i,"not represented!")
+            except KeyboardInterrupt: pass
             if n != m: print()
     else:
         try:
