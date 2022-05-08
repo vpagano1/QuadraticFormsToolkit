@@ -155,7 +155,7 @@ def psquareclass(p,k):
                 represented_bool = True
                 break
     if not represented_bool:
-        print("[pu]: not represented up to "+str(p*k+max(antisquares))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(antisquares)+") )")
+        print("[pu]: not represented up to "+str(p*(p*k+max(antisquares)))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(antisquares)+") )")
 
 restart = True
 while True:
