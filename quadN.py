@@ -370,6 +370,8 @@ while True:
         print(whitespace(2*tab)+"Also 'eval', 'ev', 'evaluate'")
         print(whitespace(tab)+"help: Generate this menu")
         print(whitespace(2*tab)+"Also 'what', 'h', 'menu'")
+        print(whitespace(tab)+"u: Check if the form is universal (15 Theorem)")
+        print(whitespace(2*tab)+"Also 'universal', 'uni'")
         print(whitespace(tab)+"l: Print representation up to the 1st input")
         print(whitespace(2*tab)+"Also 'list', 'until', 'unt'")
         print(whitespace(tab)+"lh: Print not-represented numbers<=1st input")
@@ -384,7 +386,7 @@ while True:
         print(whitespace(2*tab)+"Also 'p-ladder','ladder'")
         print(whitespace(tab)+"pll: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient<=2nd input and maximum exponent k=3rd input")
         print(whitespace(2*tab)+"Also 'p-ladder list','ladder list'")
-        print(whitespace(tab)+"c: Generate the list of primes p which are locally p-ladders; for an infinite subset of these, the quadratic form is a p-ladder")
+        print(whitespace(tab)+"c: Generate the list of primes p for which the quadratic form is locally a p-ladder; for an infinite subset of these, the quadratic form is a p-ladder globally (City Theorem, Main Theorem of Ladders)")
         print(whitespace(2*tab)+"Also 'city','main'")
     else:
         try:
