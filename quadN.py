@@ -4,15 +4,13 @@ from sympy import primerange
 import numpy as np
 
 def evalQuad(quad,entries):
-    rank = len(quad)
-    # if rank > 1:
-    if rank != len(entries): raise Exception("Number of variables must match length of entries.")
+    if len(quad) != len(entries): raise Exception("Number of variables must match length of entries.")
     return np.matmul(entries,np.matmul(quad,np.transpose(entries)))
 
-def make_zeros(n):
+def make_zeros(n,default=0):
     zeros = []
     for i in range(n):
-        zeros.append(0)
+        zeros.append(default)
     return zeros
 
 def clock(watch,m):
@@ -28,8 +26,7 @@ def clock(watch,m):
 
 def represents(quad,k):
     v = max(ceil(sqrt(k)),1)
-    rank = len(quad)
-    entries = make_zeros(rank)
+    entries = make_zeros(len(quad))
     while entries != True:
         if evalQuad(quad, entries) == k:
             return (True, entries)
@@ -47,6 +44,7 @@ def universal(quad):
 def get_quad():
     empty = False
     diag = []
+    print("Enter diagonal:")
     while not empty:
         new_diag = input("#> ")
         empty = new_diag==""
@@ -56,10 +54,12 @@ def get_quad():
                 diag.append(int_diag)
             except ValueError:
                 print("Integers only, please!")
+    if len(diag) == 0: exit()
     quad = []
     for i in range(len(diag)):
-        quad.append(make_zeros(len(diag)))
+        quad.append(make_zeros(len(diag)," "))
     for i in range(len(diag)): quad[i][i] = diag[i]
+    print("Enter value for X:")
     for i in range(len(diag)):
         for j in range(i+1,len(diag)):
             quad[i][j] = "X"
@@ -73,6 +73,8 @@ def get_quad():
     #         quad[i][j] = quad[j][i]
     print("Quadratic form is:")
     print_quad(quad)
+    print()
+    print("Now type any number you want to represent, or a special command (type 'help' to see a full list of special commands)")
     return quad
 
 def whitespace(n):
@@ -280,7 +282,7 @@ while True:
         psquareclass(p, k)
     elif n in ["sq", "squares", "sqs", "square classes"]:
         k = get_integer(">> ",30)
-        if len(quad)>=3:
+        if np.linalg.matrix_rank(quad)>=3:
             det = np.linalg.det(quad)
             print("p=2")
             square2class(k)
@@ -289,7 +291,8 @@ while True:
                     print()
                     print("p="+str(p))
                     psquareclass(p,k)
-        if len(quad)==2:
+        elif np.linalg.matrix_rank(quad) == 2:
+            print("Rank = 2, answer with the largest prime (or integer above the prime) you want a square-class for?")
             pmax = get_integer(">> ",30)
             print("p=2")
             square2class(k)
@@ -297,6 +300,8 @@ while True:
                 print()
                 print("p="+str(p))
                 psquareclass(p,k)
+        else:
+            print("Rank = 1, not displaying square-classes")
     elif n[len(n)-2:len(n)] == "sq":
         k = get_integer(">> ",30)
         try:
@@ -336,8 +341,7 @@ while True:
             except KeyboardInterrupt: pass
             if n != m: print()
     elif n in ["city","c","main"]:
-        det = 1
-        for c in quad: det *= c
+        det = det = np.linalg.det(quad)
         Lambda = 8
         for p in primerange(3,det):
             if det%p == 0: Lambda *= p
@@ -354,6 +358,34 @@ while True:
             for p in primerange(3,Lambda*100):
                 if (p-1)%Lambda == 0: print(p)
         except KeyboardInterrupt: pass
+    elif n in ["help", "what", "h", "menu"]:
+        tab = 3
+        print("Welcome! This is the quadratic forms toolkit, written in Python 3.9.9 by Max Gotts.")
+        print("Special commands are:")
+        print(whitespace(tab)+"p: Print the quadratic form")
+        print(whitespace(2*tab)+"Also 'print'")
+        print(whitespace(tab)+"q: Enter new quadratic form")
+        print(whitespace(2*tab)+"Also 'quit','exit','done'")
+        print(whitespace(tab)+"e: Evaluate the quadratic form with inputs that follow")
+        print(whitespace(2*tab)+"Also 'eval', 'ev', 'evaluate'")
+        print(whitespace(tab)+"help: Generate this menu")
+        print(whitespace(2*tab)+"Also 'what', 'h', 'menu'")
+        print(whitespace(tab)+"l: Print representation up to the 1st input")
+        print(whitespace(2*tab)+"Also 'list', 'until', 'unt'")
+        print(whitespace(tab)+"lh: Print not-represented numbers<=1st input")
+        print(whitespace(2*tab)+"Also 'list hide', 'hide list', 'hl', 'hide until', 'until hide', 'hunt', 'unth'")
+        print(whitespace(tab)+"2sq: Show representation of the simple 2-square classes (k=1st input)")
+        print(whitespace(2*tab)+"Also '2-square classes', '2 square classes'")
+        print(whitespace(tab)+"psq or {p}sq: Show representation of the simple p-square classes (k=1st input)")
+        print(whitespace(2*tab)+"Also 'p-square classes','p square classes','oddsq'")
+        print(whitespace(tab)+"sq: If rank>=3, show square classes for all p|2det (k=1st input), if rank=2, show square classes for prime p<=2nd input (k=1st input)")
+        print(whitespace(2*tab)+"Also 'squares', 'sqs', 'square classes'")
+        print(whitespace(tab)+"pl: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient=2nd input and maximum exponent=3rd input")
+        print(whitespace(2*tab)+"Also 'p-ladder','ladder'")
+        print(whitespace(tab)+"pll: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient<=2nd input and maximum exponent k=3rd input")
+        print(whitespace(2*tab)+"Also 'p-ladder list','ladder list'")
+        print(whitespace(tab)+"c: Generate the list of primes p which are locally p-ladders; for an infinite subset of these, the quadratic form is a p-ladder")
+        print(whitespace(2*tab)+"Also 'city','main'")
     else:
         try:
             nint = int(n)
