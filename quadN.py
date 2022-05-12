@@ -1,4 +1,4 @@
-from math import sqrt, ceil
+from math import sqrt, ceil, floor
 from sys import exit
 from sympy import primerange
 import numpy as np
@@ -75,14 +75,44 @@ def get_quad():
     print_quad(quad)
     return quad
 
+def whitespace(n):
+    s = ""
+    for i in range(n): s += " "
+    return s
+    
+
+def get_length(n):
+    if type(n) == int:
+        if n > 0:
+            count = 0
+            while n > 0:
+                n = floor(n/10)
+                count += 1
+            return count
+        elif n == 0:
+            return 1
+    elif type(n) == str:
+        return len(n)
+
 def print_quad(quad):
+    lengths = []
+    for i in range(len(quad)):
+        for j in range(len(quad)):
+            lengths.append(get_length(quad[i][j]))
+    maxQ = max(lengths)
+
+    lengthsE = []
+    for i in range(len(quad)):
+        lengthsE.append(get_length(quad[i][len(quad)-1]))
+    maxE = max(lengthsE)
+
     for i in range(len(quad)):
         print("[", end="")
         for j in range(len(quad)):
             if j != len(quad)-1:
-                print(quad[i][j], end=" ")
+                print(quad[i][j], end=whitespace(maxQ-get_length(quad[i][j])+1))
             else:
-                print(quad[i][j], end="]\n")
+                print(quad[i][j], end=whitespace(maxE-get_length(quad[i][j]))+"]\n")
             
 
 def get_integer(input_string, default=None):
@@ -180,6 +210,16 @@ def psquareclass(p,k):
                 break
     if not represented_bool:
         print("[pu]: not represented up to "+str(p*(p*k+max(antisquares)))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(antisquares)+") )")
+
+
+# print(get_length(1))
+# print("x"+whitespace(get_length(1))+"y")
+# print(get_length(10))
+# print("x"+whitespace(get_length(10))+"y")
+# print(get_length(100))
+# print("x"+whitespace(get_length(100))+"y")
+# print(get_length(1000))
+# print("x"+whitespace(get_length(1000))+"y")
 
 restart = True
 while True:
