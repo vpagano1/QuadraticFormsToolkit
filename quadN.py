@@ -2,6 +2,7 @@ from math import sqrt, ceil, floor
 from sys import exit
 from sympy import primerange
 import numpy as np
+import re
 
 def evalQuad(quad,entries):
     if len(quad) != len(entries): raise Exception("Number of variables must match length of entries.")
@@ -13,20 +14,33 @@ def make_zeros(n,default=0):
         zeros.append(default)
     return zeros
 
+# def clock(watch,m):
+#     watch[0] = (watch[0]+1)%(m+1)
+#     for i in range(len(watch)):
+#         if watch[i] == 0 and i<len(watch)-1:
+#             watch[i+1] = (watch[i+1]+1)%(m+1)
+#         elif watch[i] == 0 and i==len(watch)-1:
+#             watch = True
+#         else:
+#             break
+#     return watch
+
 def clock(watch,m):
-    watch[0] = (watch[0]+1)%(m+1)
+    watch[0] = (watch[0]-1)%(2*m+1)
+    if watch[0] > m: watch[0] -= 2*m+1
     for i in range(len(watch)):
-        if watch[i] == 0 and i<len(watch)-1:
-            watch[i+1] = (watch[i+1]+1)%(m+1)
-        elif watch[i] == 0 and i==len(watch)-1:
+        if watch[i] == m and i<len(watch)-1:
+            watch[i+1] = (watch[i+1]-1)%(2*m+1)
+            if watch[i+1] > m: watch[i+1] -= 2*m+1
+        elif watch[i] == m and i==len(watch)-1:
             watch = True
         else:
             break
     return watch
 
 def represents(quad,k):
-    v = max(ceil(sqrt(k)),1)
-    entries = make_zeros(len(quad))
+    v = max(ceil(sqrt(abs(k))),1)
+    entries = make_zeros(len(quad),v)
     while entries != True:
         if evalQuad(quad, entries) == k:
             return (True, entries)
@@ -74,7 +88,6 @@ def get_quad():
     print("Quadratic form is:")
     print_quad(quad)
     print()
-    print("Now type any number you want to represent, or a special command (type 'help' to see a full list of special commands)")
     return quad
 
 def whitespace(n):
@@ -93,6 +106,13 @@ def get_length(n):
             return count
         elif n == 0:
             return 1
+        elif n < 0:
+            n = -n
+            count = 1
+            while n > 0:
+                n = floor(n/10)
+                count += 1
+            return count
     elif type(n) == str:
         return len(n)
 
@@ -124,13 +144,16 @@ def get_integer(input_string, default=None):
             notinteger = False
             stdin = input(input_string)
             if stdin == "" and default != None: k = default
+            elif len(stdin) > 2:
+                if stdin[0] == "-":
+                    k = -int(stdin[1:])
             else: k = int(stdin)
         except ValueError:
             notinteger = True
             print("Integers only, please!")
     return k
 
-def getSquares(p):
+def get_squares(p):
     squares = []
     antisquares = []
     for i in range(p):
@@ -162,8 +185,41 @@ def square2class(k):
         if not represented_bool:
             print("2u"+str(m)+": not represented up to "+str(2*(8*k+m))+", (n="+str(k)+": 2*(8*"+str(k)+"+"+str(m)+") )")
 
+def neg1squareclass(k=None):
+    posdef = False
+    try:
+        np.linalg.cholesky(quad)
+        posdef = True
+    except np.linalg.LinAlgError:
+        posdef = False
+    if posdef:
+        print("(+): represented: positive definite")
+        print("(-): not represented: positive definite")
+    else:
+        posrep = False
+        if k == None: k = get_integer(">> ",30)
+        for i in range(k):
+            rep = represents(quad,k)
+            if rep[0]:
+                print("(+): "+str(k)+" represented "+str(rep[1]))
+                posrep = True
+                break
+        if not posrep:
+            print("(+): not represented up to "+str(k))
+            
+        negrep = False
+        if k == None: k = get_integer(">> ",30)
+        for i in range(k):
+            rep = represents(quad,-k)
+            if rep[0]:
+                print("(-): "+str(-k)+" represented "+str(rep[1]))
+                negrep = True
+                break
+        if not negrep:
+            print("(-): not represented up to "+str(-k))
+
 def psquareclass(p,k):
-    squares, antisquares = getSquares(p)
+    squares, antisquares = get_squares(p)
 
     represented_bool = False
     for i in range(k+1):
@@ -213,24 +269,26 @@ def psquareclass(p,k):
     if not represented_bool:
         print("[pu]: not represented up to "+str(p*(p*k+max(antisquares)))+", n="+str(k)+": "+str(p)+"*("+str(p)+"*"+str(k)+"+"+str(antisquares)+") )")
 
-
-# print(get_length(1))
-# print("x"+whitespace(get_length(1))+"y")
-# print(get_length(10))
-# print("x"+whitespace(get_length(10))+"y")
-# print(get_length(100))
-# print("x"+whitespace(get_length(100))+"y")
-# print(get_length(1000))
-# print("x"+whitespace(get_length(1000))+"y")
-
 restart = True
 while True:
     if restart:
         quad = get_quad()
+        print("Now type any number you want to represent, or a special command (type 'help' to see a full list of special commands)")
         restart = False
     n = input("> ")
     if n == "":
         pass
+    elif n[0] == "-":
+        try:
+            nint = -int(n[1:])
+            rep = represents(quad, nint)
+            if rep[0]:
+                print("Represented!", rep[1])
+            elif not rep[0]:
+                print("Not represented!")
+        except ValueError:
+            print("Integers only, please!")
+        except KeyboardInterrupt: pass
     elif n in ["eval", "e", "ev", "evaluate"]:
         entries = []
         for i in range(len(quad)): entries.append(get_integer(">> "))
@@ -284,10 +342,15 @@ while True:
         p = get_integer(">> ",3)
         k = get_integer(">> ",30)
         psquareclass(p, k)
+    elif n in ["-1sq", "negative square classes", "negsq"]:
+        neg1squareclass(None)
     elif n in ["sq", "squares", "sqs", "square classes"]:
         k = get_integer(">> ",30)
         if np.linalg.matrix_rank(quad)>=3:
             det = abs(round(np.linalg.det(quad)))
+            print("p=-1")
+            neg1squareclass(k)
+            print()
             print("p=2")
             square2class(k)
             for p in primerange(3,det+1):
@@ -298,6 +361,9 @@ while True:
         elif np.linalg.matrix_rank(quad) == 2:
             print("Rank = 2, answer with the largest prime (or integer above the prime) you want a square-class for?")
             pmax = get_integer(">> ",30)
+            print("p=-1")
+            neg1squareclass(k)
+            print()
             print("p=2")
             square2class(k)
             for p in primerange(3,pmax+1):
