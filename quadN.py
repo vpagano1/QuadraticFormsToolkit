@@ -64,7 +64,7 @@ def get_quad():
         for j in range(i+1,len(diag)):
             quad[i][j] = "X"
             print_quad(quad)
-            new_entry = get_integer("##> ",0) # (r"+str(i+1)+",c"+str(j+1)+")
+            new_entry = get_integer("#> ",0) # (r"+str(i+1)+",c"+str(j+1)+")
             quad[i][j] = new_entry
             quad[j][i] = new_entry
     # for i in range(len(diag)):
@@ -237,6 +237,10 @@ while True:
         print(evalQuad(quad,entries))
     elif n in ["p", "print"]:
         print_quad(quad)
+    elif n in ["det","determinant"]:
+        print(round(np.linalg.det(quad)))
+    elif n in ["rank"]:
+        print(np.linalg.matrix_rank(quad))
     elif n in ["universal", "u", "uni"]:
         if universal(quad): print("Universal!")
     elif n in ["quit","q","exit","done"]:
@@ -283,10 +287,10 @@ while True:
     elif n in ["sq", "squares", "sqs", "square classes"]:
         k = get_integer(">> ",30)
         if np.linalg.matrix_rank(quad)>=3:
-            det = np.linalg.det(quad)
+            det = abs(round(np.linalg.det(quad)))
             print("p=2")
             square2class(k)
-            for p in primerange(3,det):
+            for p in primerange(3,det+1):
                 if det%p == 0:
                     print()
                     print("p="+str(p))
@@ -296,7 +300,7 @@ while True:
             pmax = get_integer(">> ",30)
             print("p=2")
             square2class(k)
-            for p in primerange(3,pmax):
+            for p in primerange(3,pmax+1):
                 print()
                 print("p="+str(p))
                 psquareclass(p,k)
@@ -341,21 +345,21 @@ while True:
             except KeyboardInterrupt: pass
             if n != m: print()
     elif n in ["city","c","main"]:
-        det = det = np.linalg.det(quad)
+        det = abs(round(np.linalg.det(quad)))
         Lambda = 8
-        for p in primerange(3,det):
+        for p in primerange(3,det+1):
             if det%p == 0: Lambda *= p
         try:
-            for p in primerange(3,Lambda*100):
+            for p in primerange(3,Lambda*100+1):
                 if (p-1)%Lambda == 0: print(p)
         except KeyboardInterrupt: pass
     elif n in ["cityd","cityn","city det","citydet","cd","main det","maind","maindet"]:
         det = get_integer(">> ")
         Lambda = 8
-        for p in primerange(3,det):
+        for p in primerange(3,det+1):
             if det%p == 0: Lambda *= p
         try:
-            for p in primerange(3,Lambda*100):
+            for p in primerange(3,Lambda*100+1):
                 if (p-1)%Lambda == 0: print(p)
         except KeyboardInterrupt: pass
     elif n in ["help", "what", "h", "menu"]:
@@ -368,6 +372,9 @@ while True:
         print(whitespace(2*tab)+"Also 'quit','exit','done'")
         print(whitespace(tab)+"e: Evaluate the quadratic form with inputs that follow")
         print(whitespace(2*tab)+"Also 'eval', 'ev', 'evaluate'")
+        print(whitespace(tab)+"det: Print the determinant")
+        print(whitespace(2*tab)+"Also 'determinant'")
+        print(whitespace(tab)+"rank: Print the rank")
         print(whitespace(tab)+"help: Generate this menu")
         print(whitespace(2*tab)+"Also 'what', 'h', 'menu'")
         print(whitespace(tab)+"u: Check if the form is universal (15 Theorem)")
@@ -376,15 +383,15 @@ while True:
         print(whitespace(2*tab)+"Also 'list', 'until', 'unt'")
         print(whitespace(tab)+"lh: Print not-represented numbers<=1st input")
         print(whitespace(2*tab)+"Also 'list hide', 'hide list', 'hl', 'hide until', 'until hide', 'hunt', 'unth'")
-        print(whitespace(tab)+"2sq: Show representation of the simple 2-square classes (k=1st input)")
+        print(whitespace(tab)+"2sq: Show representation of the simple 2-square classes (n=1st input)")
         print(whitespace(2*tab)+"Also '2-square classes', '2 square classes'")
-        print(whitespace(tab)+"psq or {p}sq: Show representation of the simple p-square classes (k=1st input)")
+        print(whitespace(tab)+"psq or {p}sq: Show representation of the simple p-square classes (n=1st input)")
         print(whitespace(2*tab)+"Also 'p-square classes','p square classes','oddsq'")
-        print(whitespace(tab)+"sq: If rank>=3, show square classes for all p|2det (k=1st input), if rank=2, show square classes for prime p<=2nd input (k=1st input)")
+        print(whitespace(tab)+"sq: If rank>=3, show square classes for all p|2det (n=1st input), if rank=2, show square classes for prime p<=2nd input (n=1st input)")
         print(whitespace(2*tab)+"Also 'squares', 'sqs', 'square classes'")
         print(whitespace(tab)+"pl: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient=2nd input and maximum exponent=3rd input")
         print(whitespace(2*tab)+"Also 'p-ladder','ladder'")
-        print(whitespace(tab)+"pll: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient<=2nd input and maximum exponent k=3rd input")
+        print(whitespace(tab)+"pll: Test if a quadratic form is a p-ladder computationally for p=1st input with coefficient<=2nd input and maximum exponent n=3rd input")
         print(whitespace(2*tab)+"Also 'p-ladder list','ladder list'")
         print(whitespace(tab)+"c: Generate the list of primes p for which the quadratic form is locally a p-ladder; for an infinite subset of these, the quadratic form is a p-ladder globally (City Theorem, Main Theorem of Ladders)")
         print(whitespace(2*tab)+"Also 'city','main'")
