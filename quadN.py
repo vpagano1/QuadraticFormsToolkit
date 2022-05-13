@@ -193,8 +193,8 @@ def neg1squareclass(k=None):
     except np.linalg.LinAlgError:
         posdef = False
     if posdef:
-        print("(+): represented: positive definite")
-        print("(-): not represented: positive definite")
+        print("(+): represented (positive definite)")
+        print("(-): not represented (positive definite)")
     else:
         posrep = False
         if k == None: k = get_integer(">> ",30)
@@ -349,15 +349,18 @@ while True:
         if np.linalg.matrix_rank(quad)>=3:
             det = abs(round(np.linalg.det(quad)))
             print("p=-1")
-            neg1squareclass(k)
+            try: neg1squareclass(k)
+            except KeyboardInterrupt: pass
             print()
             print("p=2")
-            square2class(k)
+            try: square2class(k)
+            except KeyboardInterrupt: pass
             for p in primerange(3,det+1):
                 if det%p == 0:
                     print()
                     print("p="+str(p))
-                    psquareclass(p,k)
+                    try: psquareclass(p,k)
+                    except KeyboardInterrupt: pass
         elif np.linalg.matrix_rank(quad) == 2:
             print("Rank = 2, answer with the largest prime (or integer above the prime) you want a square-class for?")
             pmax = get_integer(">> ",30)
