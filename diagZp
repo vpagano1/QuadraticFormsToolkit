@@ -1,0 +1,57 @@
+import numpy as np
+from fractions import Fraction
+
+def val(x,p):
+  '''
+  Computes p-adic valuation of an integer.
+  Input: Integers x and p, with p usually being prime.
+  '''
+  if x == 0:
+    return 10**500
+  else:
+    i = 1
+    while x % p**i == 0:
+      i += 1
+    return i - 1
+
+def p_adic_diag(M,p,up_to_squares = False):
+  '''
+  Diagonalizes a matrix over Z_p for p >= 3.
+  Input: A symmetric matrix M, an integer p >= 3,
+  and an option to multiply by squares.
+  '''
+  n = len(M)
+  M = np.array(M).astype(float)
+  np.set_printoptions(precision=20)
+  for i in range(1,n):
+    j = i
+    while j >= 1:
+      if val(M[j][j],p) < val(M[j-1][j-1],p):
+        # Order diagonal entries: Swap row/column j with row/column j-1
+        M[:,[j,j-1]] = M[:,[j-1,j]]
+        M[[j,j-1],:] = M[[j-1,j],:]
+      j -= 1
+  for i in range(n):
+    for j in range(n-i):
+      while val(M[i][i+j],p) < val(M[i][i],p):
+        # Pushover trick: Add row/column i + j to row/column i
+        M[i] = [sum(x) for x in zip(M[i+j],M[i])] 
+        s = [sum(x) for x in zip([row[i+j] for row in M], [row[i] for row in M])]
+        for k in range(len(s)):
+          M[i][k] = s[k]
+    if M[i][i] != 0:
+      # Clear row/col: Subtract M[i][i+j]/M[i][i] * row/col i from row/col i+j
+      c = M[i][i]
+      for j in range(1,n-i):
+        b = M[i][i+j]
+        for k in range(n):
+          M[i+j][k] -= M[i][k] * b/c
+        for k in range(n):
+          M[k][i+j] -= M[k][i] * b/c
+  if up_to_squares == True:
+    for i in range(n):
+      f = Fraction(M[i][i]).limit_denominator()
+      M[i][i] = f.numerator * f.denominator
+    return M.astype(int)
+  else:
+    return M
